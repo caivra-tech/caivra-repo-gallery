@@ -37,6 +37,12 @@ Public gallery: https://caivra-tech.github.io/caivra-repo-gallery/
 
 GitHub Pages is configured with **Build and deployment → Source: GitHub Actions**. Before announcing any subsequent release, confirm post-merge CI and a successful Pages deployment for the same immutable commit SHA; then independently check the public page and assets.
 
+## Open-source tools showcase
+
+Explore both independent Caivra Tech LLC developer projects at the [Caivra Open-Source Tools page](https://caivra-tech.github.io/caivra-repo-gallery/open-source/). GitHub Reminders and this repository gallery solve different problems and have separate release processes.
+
+See [launch posts](marketing/POSTS.md), [suggested 10-day publishing calendar](marketing/PUBLISHING-CALENDAR.md), and [measured baseline](marketing/METRICS-BASELINE.md). These are planning materials; they do not imply that external social posts were published.
+
 ## Release assurance
 
 See [release assurance checklist](docs/RELEASE-ASSURANCE.md) and [changelog](CHANGELOG.md). A deployed Pages update is not itself a tagged GitHub Release.
