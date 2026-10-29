@@ -20,6 +20,7 @@ export function filterRepos(repos, {search='',language='',sort='updated',include
   .sort((a,b)=>sort==='stars'?(b.stars-a.stars||a.name.localeCompare(b.name)):sort==='name'?a.name.localeCompare(b.name):sort==='created'?(b.createdAt-a.createdAt||a.name.localeCompare(b.name)):(b.updatedAt-a.updatedAt||a.name.localeCompare(b.name)));
 }
 export function languagesOf(repos) { return [...new Set(repos.map(x=>x.language).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
+export function languageChoices(repos, selected='') { const choices=languagesOf(repos); if(selected && !choices.includes(selected)) choices.push(selected); return choices.sort((a,b)=>a.localeCompare(b)); }
 export function readState(search) { const p=new URLSearchParams(search), owner=p.get('owner')||DEFAULT_OWNER; return {owner:validOwner(owner)?owner:DEFAULT_OWNER,search:(p.get('q')||'').slice(0,200),language:(p.get('lang')||'').slice(0,60),sort:SORT_MODES.includes(p.get('sort'))?p.get('sort'):'updated',includeForks:p.get('forks')==='1'}; }
 export function stateQuery({owner=DEFAULT_OWNER,search='',language='',sort='updated',includeForks=false}={}) { const p=new URLSearchParams(); if(validOwner(owner)&&owner.toLowerCase()!==DEFAULT_OWNER)p.set('owner',owner); if(search.trim())p.set('q',search.trim()); if(language)p.set('lang',language); if(sort!=='updated'&&SORT_MODES.includes(sort))p.set('sort',sort); if(includeForks)p.set('forks','1'); return p.size?'?'+p.toString():''; }
 export function pageHasNext(header) { return typeof header==='string' && /<[^>]+>;\s*rel="next"/.test(header); }
