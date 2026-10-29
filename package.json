@@ -1,0 +1,15 @@
+{
+  "name": "caivra-repo-gallery",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Free static client-side public GitHub repository gallery",
+  "scripts": {
+    "check": "node --check src/core.js && node --check src/api.js && node --check src/app.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

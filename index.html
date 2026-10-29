@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1324">
+<meta name="description" content="A free, searchable gallery for public GitHub repositories.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src https://api.github.com; img-src 'self' data:; base-uri 'none'; object-src 'none'; form-action 'none'; upgrade-insecure-requests">
+<link rel="stylesheet" href="./styles.css"><link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<script type="module" src="./src/app.js"></script><title>Caivra Repo Gallery</title>
+</head><body>
+<a class="skip" href="#repositories">Skip to repositories</a><div class="shell">
+<header><a class="logo" href="./"><span class="mark">▦</span> CAIVRA <strong>REPO GALLERY</strong></a><nav><a href="#explore">Explore</a><a href="https://github.com/caivra-tech/caivra-repo-gallery" rel="noopener noreferrer" target="_blank">Source code ↗</a></nav></header>
+<main><section class="hero"><div><p class="eyebrow"><span class="indicator"></span> THE OPEN-SOURCE INDEX</p>
+<h1>Good work deserves<br><em>to be discovered.</em></h1><p class="lede">Explore public GitHub projects in one clean, searchable gallery. No account, API key, database, tracking, or paid service required.</p><a class="hero-cta" href="#explore">Explore repositories ↓</a></div>
+<div class="hero-art" aria-hidden="true"><div class="outline"></div><div class="code-card"><div class="dots">● ● ●</div><pre>{ projects: [
+  "build", "share",
+  "discover"
+] }</pre><span>OPEN SOURCE · ALWAYS</span></div></div></section>
+<section id="explore" class="explore"><div class="heading"><div><p class="eyebrow">EXPLORE THE ECOSYSTEM</p><h2>Repository directory</h2></div><p>Built for curious minds and creators.</p></div>
+<div class="toolbar"><form id="owner-form" novalidate><label for="owner">GitHub organization or username</label><div class="owner-row"><span>github.com/</span><input id="owner" type="text" maxlength="39" required spellcheck="false" autocomplete="off" value="caivra-tech"><button type="submit">Load</button></div><p id="owner-error" class="field-error" role="alert" hidden></p></form>
+<div class="filters"><div class="field search"><label for="search">Search projects</label><input id="search" type="search" placeholder="Name, topic, or description…"></div><div class="field"><label for="language">Language</label><select id="language"><option value="">All languages</option></select></div><div class="field"><label for="sort">Sort by</label><select id="sort"><option value="updated">Recently updated</option><option value="stars">Most starred</option><option value="name">Name A–Z</option><option value="created">Newest created</option></select></div><label class="forks"><input id="forks" type="checkbox"> Include forks</label></div></div>
+<div class="result-bar"><p id="status" role="status" aria-live="polite">Loading repositories…</p><button class="share" id="share" type="button">Copy gallery link</button></div>
+<div id="error" class="error" role="alert" hidden><span id="error-message"></span><button type="button" id="retry">Retry</button></div>
+<div id="repositories" class="grid" aria-busy="true"></div>
+<div id="empty" class="empty" hidden><div class="empty-icon">{ }</div><h3>No matching repositories</h3><p>Try another search, language, or GitHub owner.</p><button id="clear" type="button">Clear filters</button></div>
+<div class="load-wrap"><button id="more" type="button" hidden>Load more repositories</button></div></section></main>
+<footer><div><b>CAIVRA.</b> <span>Open source. Open possibilities.</span></div><div>MIT licensed · No tracking · <a href="https://github.com/caivra-tech">Caivra Tech</a> · <a href="https://github.com/caivra-tech/caivra-repo-gallery/issues">Issues</a></div></footer>
+</div></body></html>
