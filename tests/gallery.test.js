@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validOwner,safeHttpUrl,normalizeRepo,mergeRepos,filterRepos,languagesOf,readState,stateQuery,pageHasNext} from '../src/core.js';
+import {validOwner,safeHttpUrl,normalizeRepo,mergeRepos,filterRepos,languagesOf,languageChoices,readState,stateQuery,pageHasNext} from '../src/core.js';
 import {fetchFirstPage,fetchRepoPage,GitHubApiError} from '../src/api.js';
 const raw=(name,extra={})=>({id:1,name,full_name:'caivra-tech/'+name,private:false,description:'Developer tool',language:'JavaScript',topics:['devtools'],stargazers_count:5,forks_count:2,fork:false,archived:false,created_at:'2025-01-01T00:00:00Z',updated_at:'2026-01-01T00:00:00Z',...extra});
 const repo=(name,extra={})=>normalizeRepo(raw(name,extra));
@@ -16,6 +16,8 @@ test('language filtering is case insensitive',()=>{assert.equal(filterRepos([rep
 test('forks excluded by default but can be included',()=>{const x=[repo('x'),repo('fork',{fork:true})];assert.equal(filterRepos(x).length,1);assert.equal(filterRepos(x,{includeForks:true}).length,2);});
 test('sort modes operate on loaded data',()=>{const x=[repo('a',{stargazers_count:1}),repo('z',{stargazers_count:99,created_at:'2026-01-01T00:00:00Z',updated_at:'2026-04-01T00:00:00Z'})];assert.equal(filterRepos(x,{sort:'stars'})[0].name,'z');assert.equal(filterRepos(x,{sort:'name'})[0].name,'a');assert.equal(filterRepos(x,{sort:'created'})[0].name,'z');assert.equal(filterRepos(x,{sort:'updated'})[0].name,'z');});
 test('pagination merges duplicates and language list is unique',()=>{assert.equal(mergeRepos([repo('a')],[repo('a'),repo('b')]).length,2);assert.deepEqual(languagesOf([repo('a'),repo('b')]),['JavaScript']);});
+test('deep-linked language filter persists when language has not been loaded yet',()=>{const firstPage=[repo('alpha',{language:'JavaScript'})];assert.deepEqual(languageChoices(firstPage,'Rust'),['JavaScript','Rust']);assert.equal(filterRepos(firstPage,{language:'Rust'}).length,0);const withLaterPage=mergeRepos(firstPage,[repo('second',{language:'Rust'})]);assert.deepEqual(languageChoices(withLaterPage,'Rust'),['JavaScript','Rust']);assert.equal(filterRepos(withLaterPage,{language:'Rust'}).length,1);});
+test('language choices omit duplicate selected language',()=>{assert.deepEqual(languageChoices([repo('a',{language:'Rust'})],'Rust'),['Rust']);});
 test('shareable filters roundtrip',()=>{const s={owner:'Octocat',search:'hello world',language:'C++',sort:'stars',includeForks:true};assert.deepEqual(readState(stateQuery(s)),s);});
 test('invalid query options fail closed to defaults',()=>{const s=readState('?owner=evil.com&sort=invalid&forks=true');assert.equal(s.owner,'caivra-tech');assert.equal(s.sort,'updated');assert.equal(s.includeForks,false);});
 test('detects next pagination link',()=>{assert.equal(pageHasNext('<https://api.github.com/?page=2>; rel="next"'),true);assert.equal(pageHasNext('<https://api.github.com/?page=1>; rel="prev"'),false);});

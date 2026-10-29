@@ -33,11 +33,13 @@ No GitHub private data, tokens, or cookies are collected. API metadata is render
 
 The deployment workflow in `.github/workflows/pages.yml` validates and packages the site, then deploys on a push to `main`.
 
-**One-time configuration** (may require repository admin): GitHub **Settings → Pages → Build and deployment → Source: GitHub Actions**. Until this is enabled and deployment completes, the URL below is an expected address, not a verified published site.
+Public gallery: https://caivra-tech.github.io/caivra-repo-gallery/
 
-Expected Pages URL: https://caivra-tech.github.io/caivra-repo-gallery/
+GitHub Pages is configured with **Build and deployment → Source: GitHub Actions**. Before announcing any subsequent release, confirm post-merge CI and a successful Pages deployment for the same immutable commit SHA; then independently check the public page and assets.
 
-After enabling Pages, inspect the Actions deployment and confirm the URL is live.
+## Release assurance
+
+See [release assurance checklist](docs/RELEASE-ASSURANCE.md) and [changelog](CHANGELOG.md). A deployed Pages update is not itself a tagged GitHub Release.
 
 ## Contributing / security
 

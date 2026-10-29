@@ -1,4 +1,4 @@
-import {DEFAULT_OWNER,validOwner,compactCount,filterRepos,languagesOf,mergeRepos,readState,stateQuery} from './core.js';
+import {DEFAULT_OWNER,validOwner,compactCount,filterRepos,languageChoices,mergeRepos,readState,stateQuery} from './core.js';
 import {fetchFirstPage,fetchRepoPage} from './api.js';
 const el=id=>document.getElementById(id);
 const ui={form:el('owner-form'),owner:el('owner'),ownerError:el('owner-error'),search:el('search'),language:el('language'),sort:el('sort'),forks:el('forks'),grid:el('repositories'),status:el('status'),error:el('error'),errorMessage:el('error-message'),retry:el('retry'),empty:el('empty'),clear:el('clear'),more:el('more'),share:el('share')};
@@ -21,7 +21,7 @@ function card(repo){
   item.append(meta);return item;
 }
 function updateUrl(){history.replaceState(null,'',location.pathname+stateQuery(state)+location.hash);}
-function languageOptions(){const langs=languagesOf(state.repos);if(state.language&&!langs.includes(state.language))state.language='';ui.language.replaceChildren(new Option('All languages',''),...langs.map(x=>new Option(x,x)));ui.language.value=state.language;}
+function languageOptions(){const langs=languageChoices(state.repos,state.language);ui.language.replaceChildren(new Option('All languages',''),...langs.map(x=>new Option(x,x)));ui.language.value=state.language;}
 function render(){
   const shown=filterRepos(state.repos,state),fragment=document.createDocumentFragment();for(const r of shown)fragment.append(card(r));ui.grid.replaceChildren(fragment);
   ui.grid.setAttribute('aria-busy',String(state.loading));
