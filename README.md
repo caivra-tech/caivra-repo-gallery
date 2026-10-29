@@ -25,7 +25,7 @@ Open `http://localhost:8000/`. Serving over HTTP is recommended because browsers
 
 ## How it works
 
-The browser fetches public metadata directly from `https://api.github.com/orgs/{owner}/repos` (or `/users/{owner}/repos` for personal accounts), using `type=public&per_page=100`. Search and sorting apply only to **loaded pages**, not to yet-unloaded repositories. GitHub rate limits anonymous access; a rate-limit error is displayed without asking visitors for a personal access token.
+The browser fetches public metadata directly from `https://api.github.com/orgs/{owner}/repos` (or `/users/{owner}/repos` for personal accounts), using `type=public&per_page=100` for organizations or `type=owner&per_page=100` for personal accounts. Search and sorting apply only to **loaded pages**, not to yet-unloaded repositories. GitHub rate limits anonymous access; a rate-limit error is displayed without asking visitors for a personal access token.
 
 No GitHub private data, tokens, or cookies are collected. API metadata is rendered using DOM text nodes, not HTML injection. External project links are restricted to HTTP(S), and API requests only target GitHub. The site does not use trackers or third-party UI libraries.
 
