@@ -5,7 +5,8 @@ export async function fetchRepoPage({owner,page=1,accountType='org',signal,fetch
   if(!Number.isInteger(page)||page<1||page>100)throw new GitHubApiError('Invalid page number.',400);
   if(!['org','user'].includes(accountType))throw new GitHubApiError('Invalid account type.',400);
   const endpoint=accountType==='org'?'orgs':'users';
-  const url='https://api.github.com/'+endpoint+'/'+encodeURIComponent(owner)+'/repos?per_page=100&page='+page+'&sort=updated&type=public';
+  const type = accountType === 'org' ? 'public' : 'owner';
+  const url='https://api.github.com/'+endpoint+'/'+encodeURIComponent(owner)+'/repos?per_page=100&page='+page+'&sort=updated&type='+type;
   let response;
   try { response=await fetchImpl(url,{signal,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}}); }
   catch(e){if(e?.name==='AbortError')throw e;throw new GitHubApiError('Could not connect to GitHub. Check your connection and try again.',0);}
