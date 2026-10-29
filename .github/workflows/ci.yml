@@ -29,4 +29,6 @@ jobs:
           test -s src/api.js
           test -s src/app.js
           test -s favicon.svg
+          test -s open-source/index.html
+          test -s open-source/style.css
           test -f .nojekyll
