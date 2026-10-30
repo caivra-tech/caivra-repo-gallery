@@ -1,6 +1,6 @@
 # Ready-to-publish channel copy
 
-All drafts below were prepared 2026-10-29. **Nothing in this file is automatically published.** Verify links and platform rules before posting. If a GitHub Reminders newer release is completed before publication, update the version language accurately.
+Drafts originally prepared 2026-10-29 and revised 2026-10-30 for the published GitHub Reminders v1.0.1 release. **Nothing in this file is automatically published.** Verify links and platform rules before posting.
 
 ## 1. LinkedIn — combined introduction
 
@@ -8,7 +8,7 @@ All drafts below were prepared 2026-10-29. **Nothing in this file is automatical
 
 At Caivra Tech LLC, we are publishing practical tools that simplify developer workflows without introducing unnecessary hosting or subscriptions.
 
-**GitHub Reminders** — a GitHub Action for scheduling reminders directly in issues and pull requests. Public v1.0.0 is available; additional security and reliability changes are undergoing release validation.
+**GitHub Reminders** — a GitHub Action for scheduling reminders directly in issues and pull requests. The new v1.0.1 maintenance release is published with security and reliability improvements. Delivery remains best effort.
 
 Source / installation: https://github.com/caivra-tech/GitHub-reminders
 
@@ -51,13 +51,13 @@ Note: the gallery displays public metadata from GitHub's API, and anonymous rate
 
 GitHub Reminders is an MIT-licensed, repository-native Action from Caivra Tech LLC.
 
-The published v1.0.0 release lets users create reminder commands in issue/PR conversations. Reminder metadata stays in GitHub comments, and a scheduled GitHub Actions run checks for due reminders.
+The published v1.0.1 release lets users create reminder commands in issue/PR conversations. Reminder metadata stays in GitHub comments, and a scheduled GitHub Actions run checks for due reminders.
 
 No separate hosted reminder database is required.
 
 Install and read the limitations: https://github.com/caivra-tech/GitHub-reminders
 
-Scheduled GitHub Actions can be delayed, so this is for approximate reminders—not safety-critical deadlines. Our next security/reliability release remains under review.
+Scheduled GitHub Actions can be delayed, so this is for approximate reminders—not safety-critical deadlines. The published v1.0.1 maintenance release adds security and reliability improvements. Delivery remains best effort.
 
 #GitHubActions #OpenSource #DeveloperProductivity #SoftwareEngineering
 
@@ -89,13 +89,13 @@ Title: **GitHub-Native Issue Reminders Without Another Hosted Service**
 
 A developer may know that an issue or pull request needs to be revisited, without wanting to manage yet another reminders dashboard. GitHub Reminders, an open-source GitHub Action from Caivra Tech LLC, explores a repository-native design for that workflow.
 
-In published v1.0.0, the user writes a `/remind` command on a GitHub issue or PR. The Action stores reminder metadata in a GitHub comment, and a scheduled GitHub Actions workflow later checks for due reminders. Delivery is a new comment mentioning the originating user.
+In published v1.0.1, the user writes a `/remind` command on a GitHub issue or PR. The Action stores reminder metadata in a GitHub comment, and a scheduled GitHub Actions workflow later checks for due reminders. Delivery is a new comment mentioning the originating user.
 
 The important design decision is where the data lives: GitHub comments, not a separate vendor-hosted reminder database. That reduces infrastructure burden, but also means reminder text follows the conversation's visibility rules. It should never contain secrets. The implementation scopes permissions and includes cancellation/list commands.
 
 GitHub Actions scheduling is not a precise clock. Reminders are best-effort, and schedule starts can be delayed; the tool is not appropriate for critical deadlines or guaranteed-time notifications.
 
-The existing public release is v1.0.0. Proposed v1.0.1 security and reliability hardening is not yet released; please rely on the currently published documentation when evaluating adoption.
+The published v1.0.1 maintenance release includes security and reliability improvements. Delivery timing and exactly-once execution are not guaranteed; consult the release notes for limitations.
 
 Installation and source: https://github.com/caivra-tech/GitHub-reminders
 
@@ -120,7 +120,7 @@ Post only if the community's current promotional rules permit.
 
 Title: **Two MIT-licensed GitHub utilities from Caivra Tech — feedback welcome**
 
-We maintain two distinct free tools: GitHub Reminders (published v1.0.0 GitHub Action for reminders on issues/PRs) and Caivra Repo Gallery (live browser-based explorer of public repositories). Both are source-available under MIT and have no separate hosted database.
+We maintain two distinct free tools: GitHub Reminders (published v1.0.1 GitHub Action for reminders on issues/PRs) and Caivra Repo Gallery (live browser-based explorer of public repositories). Both are source-available under MIT and have no separate hosted database.
 
 Reminders: https://github.com/caivra-tech/GitHub-reminders
 Gallery: https://github.com/caivra-tech/caivra-repo-gallery
