@@ -4,7 +4,7 @@
 
 ## Product positioning (do not interchange)
 
-**GitHub Reminders** solves the problem of revisiting GitHub issues and pull requests. It is a repository-native GitHub Action with an **existing published v1.0.0 release**. Audience: maintainers, reviewers, engineering teams. Primary action: read the installation guide and install in a controlled test repository. Do not claim the draft v1.0.1 changes have shipped or the private schedule-validation gate has closed.
+**GitHub Reminders** solves the problem of revisiting GitHub issues and pull requests. It is a repository-native GitHub Action with a **published v1.0.1 maintenance release**. Audience: maintainers, reviewers, engineering teams. Primary action: read the installation guide and install in a controlled test repository. The v1.0.1 release is published with two observed scheduled executions. Do not claim exact-time or exactly-once delivery.
 
 **Caivra Repo Gallery** solves the problem of browsing and sharing public GitHub projects. It is a **live static web application**. Audience: developers, project owners, hiring managers and OSS discoverers. Primary action: try the live gallery, submit feedback and star if useful. The web app is public and deployed; it is **not yet a tagged formal GitHub Release**.
 
@@ -42,7 +42,7 @@ Avoid stacking repetitive posts on the same communities or promising a guarantee
 
 ## Promotion quality gates
 
-- Use the published **v1.0.0** tag for Reminders. Do not call the v1.0.1 security work released while it remains draft.
+- Use the published **v1.0.1** tag for Reminders. Do not claim exact delivery timing or exactly-once guarantees.
 - Treat the Gallery as a **live public web tool**. Do not call it security-certified or claim a formal GitHub Release unless one exists.
 - Use actual product screenshots for functional demos; branded artwork is illustration, not real UI.
 - Review community posting rules; avoid duplicate crossposting, exaggerated adoption or fabricated performance claims.
