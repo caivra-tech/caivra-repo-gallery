@@ -4,7 +4,7 @@
 
 | Product | Public GitHub stars | Forks | Public listing | Release state |
 |---|---:|---:|---|---|
-| GitHub Reminders | 0 | 0 | https://github.com/caivra-tech/GitHub-reminders | Tagged v1.0.0, further draft work |
+| GitHub Reminders | 0 | 0 | https://github.com/caivra-tech/GitHub-reminders | Tagged v1.0.0 at baseline; v1.0.1 published Oct 30 (post-baseline) |
 | Caivra Repo Gallery | 0 | 0 | https://github.com/caivra-tech/caivra-repo-gallery | Published Pages site; no GitHub Release tag |
 
 These are **observed** counts at baseline. Do not replace with speculative adoption numbers. Stars are attention signals, not user/customer counts.

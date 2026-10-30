@@ -13,7 +13,7 @@ test('landing page has both distinct projects with safe canonical outbound links
   assert.match(tools, /https:\/\/github.com\/caivra-tech\/GitHub-reminders/);
   assert.match(tools, /https:\/\/github.com\/caivra-tech\/caivra-repo-gallery/);
   assert.match(tools, /https:\/\/caivra-tech.github.io\/caivra-repo-gallery\//);
-  assert.match(tools, /Published v1\.0\.0/);
+  assert.match(tools, /Published v1\.0\.1/);
   assert.match(tools, /Live web application/);
   assert.doesNotMatch(tools, /v1\.0\.1 (released|published|stable)/i);
   assert.doesNotMatch(tools, /security.certified/i);
