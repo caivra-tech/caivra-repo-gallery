@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Free static client-side public GitHub repository gallery",
   "scripts": {
-    "check": "node --check src/core.js && node --check src/api.js && node --check src/app.js",
+    "check": "node --check src/core.js && node --check src/api.js && node --check src/app.js && node --check src/snapshot.js",
     "test": "node --test"
   },
   "engines": {
