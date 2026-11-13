@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildSnapshot,validateSnapshot,resolveCommit,SNAPSHOT_SCHEMA} from '../src/snapshot.js';
+import {buildSnapshot,validateSnapshot,resolveCommit,validRepositoryFullName,SNAPSHOT_SCHEMA} from '../src/snapshot.js';
 const SHA='a'.repeat(40);
 const repo={fullName:'caivra-tech/example',url:'https://github.com/caivra-tech/example',description:'Example',language:'JS',stars:2};
 const mock=async()=>({ok:true,json:async()=>({sha:SHA})});
@@ -30,4 +30,23 @@ test('rejects invalid GitHub commit payload',async()=>{
 });
 test('refuses export beyond ten selected repositories before network access',async()=>{
  await assert.rejects(buildSnapshot(Array.from({length:11},()=>repo),{},()=>{throw Error('unexpected request')}),/Select 1–10/);
+});
+
+test('rejects path-normalizing repository names at import and API boundaries',async()=>{
+ const now=new Date().toISOString();
+ for(const name of ['octocat/..','octocat/.','-bad/repo','octocat/../evil']){
+  assert.equal(validRepositoryFullName(name),false);
+  assert.throws(()=>validateSnapshot({schema:SNAPSHOT_SCHEMA,createdAt:now,repositories:[{fullName:name,commitSha:SHA,observedAt:now}]}));
+  await assert.rejects(resolveCommit(name,()=>{throw Error('network must not be called')}),/Invalid repository name/);
+ }
+});
+test('aborted export does not resolve further commits',async()=>{
+ const controller=new AbortController();
+ const first={...repo,fullName:'caivra-tech/first'};
+ const second={...repo,fullName:'caivra-tech/second'};
+ let calls=0;
+ await assert.rejects(buildSnapshot([first,second],{},async()=>{
+  calls++;controller.abort();return {ok:true,json:async()=>({sha:SHA})};
+ },controller.signal),{name:'AbortError'});
+ assert.equal(calls,1);
 });
