@@ -28,6 +28,7 @@ jobs:
           test -s src/core.js
           test -s src/api.js
           test -s src/app.js
+          test -s src/snapshot.js
           test -s favicon.svg
           test -s open-source/index.html
           test -s open-source/style.css
