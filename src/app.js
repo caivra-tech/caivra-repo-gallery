@@ -1,9 +1,10 @@
+import {buildSnapshot,validateSnapshot} from './snapshot.js';
 import {DEFAULT_OWNER,validOwner,compactCount,filterRepos,languageChoices,mergeRepos,readState,stateQuery} from './core.js';
 import {fetchFirstPage,fetchRepoPage} from './api.js';
 const el=id=>document.getElementById(id);
-const ui={form:el('owner-form'),owner:el('owner'),ownerError:el('owner-error'),search:el('search'),language:el('language'),sort:el('sort'),forks:el('forks'),grid:el('repositories'),status:el('status'),error:el('error'),errorMessage:el('error-message'),retry:el('retry'),empty:el('empty'),clear:el('clear'),more:el('more'),share:el('share')};
+const ui={form:el('owner-form'),owner:el('owner'),ownerError:el('owner-error'),search:el('search'),language:el('language'),sort:el('sort'),forks:el('forks'),grid:el('repositories'),status:el('status'),error:el('error'),errorMessage:el('error-message'),retry:el('retry'),empty:el('empty'),clear:el('clear'),more:el('more'),share:el('share'),exportSnapshot:el('export-snapshot'),importSnapshot:el('import-snapshot'),snapshotStatus:el('snapshot-status'),snapshotView:el('snapshot-view')};
 const initial=readState(location.search);
-const state={...initial,repos:[],page:0,accountType:'org',hasNext:false,loading:false,controller:null,version:0,error:''};
+const state={...initial,repos:[],page:0,accountType:'org',hasNext:false,loading:false,controller:null,version:0,error:'',selected:new Set(),exportController:null,exportVersion:0};
 ui.owner.value=state.owner;ui.search.value=state.search;ui.sort.value=state.sort;ui.forks.checked=state.includeForks;
 function make(tag,klass,text){const x=document.createElement(tag);if(klass)x.className=klass;if(text!==undefined)x.textContent=text;return x;}
 function card(repo){
@@ -18,7 +19,7 @@ function card(repo){
   if(repo.language)meta.append(make('span','', '● '+repo.language));
   meta.append(make('span','', '★ '+compactCount(repo.stars)),make('span','', '⑂ '+compactCount(repo.forks)));
   if(repo.homepage){const hlink=make('a','','Website ↗');hlink.href=repo.homepage;hlink.target='_blank';hlink.rel='noopener noreferrer';meta.append(hlink);}
-  item.append(meta);return item;
+  item.append(meta);const choose=make('label','snapshot-select');const check=make('input');check.type='checkbox';check.checked=state.selected.has(repo.fullName);check.addEventListener('change',()=>{if(check.checked){if(state.selected.size>=10){check.checked=false;ui.snapshotStatus.textContent='Maximum 10 repositories per snapshot.';return;}state.selected.add(repo.fullName);}else state.selected.delete(repo.fullName);ui.snapshotStatus.textContent=state.selected.size+' selected';});choose.append(check,document.createTextNode(' Add '+repo.fullName+' to evaluation shortlist'));item.append(choose);return item;
 }
 function updateUrl(){history.replaceState(null,'',location.pathname+stateQuery(state)+location.hash);}
 function languageOptions(){const langs=languageChoices(state.repos,state.language);ui.language.replaceChildren(new Option('All languages',''),...langs.map(x=>new Option(x,x)));ui.language.value=state.language;}
@@ -32,8 +33,9 @@ function render(){
   updateUrl();
 }
 async function loadOwner(owner){
+  state.exportController?.abort();state.exportVersion++;ui.exportSnapshot.disabled=false;
   state.controller?.abort();const version=++state.version;state.controller=new AbortController();
-  Object.assign(state,{owner,repos:[],page:0,hasNext:false,loading:true,error:''});ui.owner.value=owner;ui.ownerError.hidden=true;render();
+  state.selected.clear();ui.snapshotStatus.textContent='0 selected';Object.assign(state,{owner,repos:[],page:0,hasNext:false,loading:true,error:''});ui.owner.value=owner;ui.ownerError.hidden=true;render();
   try {const data=await fetchFirstPage(owner,state.controller.signal);if(version!==state.version)return;state.repos=data.repos;state.page=1;state.accountType=data.accountType;state.hasNext=data.hasNext;languageOptions();}
   catch(e){if(version!==state.version||e.name==='AbortError')return;state.error=e.message||'Could not load repositories.';}
   finally{if(version===state.version){state.loading=false;render();}}
@@ -56,3 +58,28 @@ ui.retry.addEventListener('click',()=>state.page&&state.hasNext?loadMore():loadO
 ui.share.addEventListener('click',async()=>{const url=location.href;try{if(!navigator.clipboard?.writeText)throw Error();await navigator.clipboard.writeText(url);ui.share.textContent='Link copied!';}catch{ui.share.textContent='Copy URL manually';window.prompt('Copy this URL:',url);}setTimeout(()=>ui.share.textContent='Copy gallery link',2000);});
 window.addEventListener('popstate',()=>{const next=readState(location.search);state.search=next.search;state.language=next.language;state.sort=next.sort;state.includeForks=next.includeForks;ui.search.value=state.search;ui.sort.value=state.sort;ui.forks.checked=state.includeForks;if(next.owner.toLowerCase()!==state.owner.toLowerCase())loadOwner(next.owner);else{languageOptions();render();}});
 loadOwner(state.owner||DEFAULT_OWNER);
+
+ui.exportSnapshot.addEventListener('click',async()=>{
+  const selected=state.repos.filter(r=>state.selected.has(r.fullName));
+  const exportVersion=++state.exportVersion;const controller=new AbortController();state.exportController=controller;
+  ui.exportSnapshot.disabled=true;ui.snapshotStatus.textContent='Resolving selected repository commits…';
+  try{
+    const snapshot=await buildSnapshot(selected,{...state},fetch,controller.signal);
+    if(controller.signal.aborted||exportVersion!==state.exportVersion)return;
+    const blob=new Blob([JSON.stringify(snapshot,null,2)+'\n'],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download='caivra-repository-evaluation.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    ui.snapshotStatus.textContent='Exported '+snapshot.repositories.length+' version-pinned repositories.';
+  }catch(e){if(exportVersion===state.exportVersion&&e.name!=='AbortError')ui.snapshotStatus.textContent='Export not completed: '+e.message;}
+  finally{if(exportVersion===state.exportVersion){state.exportController=null;ui.exportSnapshot.disabled=false;}}
+});
+ui.importSnapshot.addEventListener('change',async()=>{
+  const file=ui.importSnapshot.files?.[0];if(!file)return;
+  try{
+    if(file.size>1024*1024)throw new Error('Snapshot exceeds 1 MB.');
+    const snapshot=validateSnapshot(JSON.parse(await file.text()));
+    ui.snapshotView.replaceChildren();const heading=make('h3','','Imported evaluation — '+snapshot.createdAt);ui.snapshotView.append(heading);const list=make('ul');for(const record of snapshot.repositories){const li=make('li');const a=make('a','',record.fullName+' @ '+record.commitSha.slice(0,12));a.href='https://github.com/'+record.fullName+'/tree/'+record.commitSha;a.target='_blank';a.rel='noopener noreferrer';li.append(a,document.createTextNode(' · observed '+record.observedAt));list.append(li);}ui.snapshotView.append(list);ui.snapshotStatus.textContent='Imported '+snapshot.repositories.length+' historical records. These are not live verification results.';
+  }catch(e){ui.snapshotStatus.textContent='Import rejected: '+e.message;}
+  finally{ui.importSnapshot.value='';}
+});
