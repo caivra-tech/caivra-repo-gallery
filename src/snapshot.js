@@ -1,9 +1,10 @@
 export const SNAPSHOT_SCHEMA = 'caivra.repo-evaluation.v1';
+export const MAX_SNAPSHOT_REPOS = 10;
 const shaPattern = /^[0-9a-f]{40}$/i;
 export function validateSnapshot(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data) || data.schema !== SNAPSHOT_SCHEMA ||
       !Number.isFinite(Date.parse(data.createdAt)) || !Array.isArray(data.repositories) ||
-      data.repositories.length > 100) throw new Error('Unsupported or invalid snapshot.');
+      data.repositories.length === 0 || data.repositories.length > 10) throw new Error('Unsupported or invalid snapshot.');
   const seen = new Set();
   for (const r of data.repositories) {
     if (!r || typeof r !== 'object' || !/^[a-z0-9-]{1,39}\/[a-z0-9_.-]{1,100}$/i.test(r.fullName) ||
@@ -23,7 +24,7 @@ export async function resolveCommit(fullName, fetchImpl = fetch) {
   return payload.sha.toLowerCase();
 }
 export async function buildSnapshot(repositories, filters, fetchImpl = fetch) {
-  if (!Array.isArray(repositories) || repositories.length === 0 || repositories.length > 100) throw new Error('Select 1–100 repositories.');
+  if (!Array.isArray(repositories) || repositories.length === 0 || repositories.length > 10) throw new Error('Select 1–10 repositories.');
   const records = [];
   for (const repo of repositories) {
     const commitSha = await resolveCommit(repo.fullName, fetchImpl);
