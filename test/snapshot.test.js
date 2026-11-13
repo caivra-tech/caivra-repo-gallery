@@ -50,3 +50,20 @@ test('aborted export does not resolve further commits',async()=>{
  },controller.signal),{name:'AbortError'});
  assert.equal(calls,1);
 });
+
+test('snapshot UI element IDs are present in the static HTML',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
+ const app=await readFile(new URL('../src/app.js',import.meta.url),'utf8');
+ for(const id of ['export-snapshot','import-snapshot','snapshot-status','snapshot-view']){
+  assert.match(html,new RegExp('id="'+id+'"'));
+  assert.ok(app.includes("el('"+id+"')"));
+ }
+});
+test('snapshot import renders text nodes and protected pinned links',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const app=await readFile(new URL('../src/app.js',import.meta.url),'utf8');
+ assert.ok(app.includes("a.rel='noopener noreferrer'"));
+ assert.ok(app.includes("record.fullName+'/tree/'+record.commitSha"));
+ assert.ok(!app.includes('innerHTML'));
+});
