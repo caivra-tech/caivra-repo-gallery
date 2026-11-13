@@ -2,7 +2,7 @@ import {buildSnapshot,validateSnapshot} from './snapshot.js';
 import {DEFAULT_OWNER,validOwner,compactCount,filterRepos,languageChoices,mergeRepos,readState,stateQuery} from './core.js';
 import {fetchFirstPage,fetchRepoPage} from './api.js';
 const el=id=>document.getElementById(id);
-const ui={form:el('owner-form'),owner:el('owner'),ownerError:el('owner-error'),search:el('search'),language:el('language'),sort:el('sort'),forks:el('forks'),grid:el('repositories'),status:el('status'),error:el('error'),errorMessage:el('error-message'),retry:el('retry'),empty:el('empty'),clear:el('clear'),more:el('more'),share:el('share'),exportSnapshot:el('export-snapshot'),importSnapshot:el('import-snapshot'),snapshotStatus:el('snapshot-status')};
+const ui={form:el('owner-form'),owner:el('owner'),ownerError:el('owner-error'),search:el('search'),language:el('language'),sort:el('sort'),forks:el('forks'),grid:el('repositories'),status:el('status'),error:el('error'),errorMessage:el('error-message'),retry:el('retry'),empty:el('empty'),clear:el('clear'),more:el('more'),share:el('share'),exportSnapshot:el('export-snapshot'),importSnapshot:el('import-snapshot'),snapshotStatus:el('snapshot-status'),snapshotView:el('snapshot-view')};
 const initial=readState(location.search);
 const state={...initial,repos:[],page:0,accountType:'org',hasNext:false,loading:false,controller:null,version:0,error:'',selected:new Set()};
 ui.owner.value=state.owner;ui.search.value=state.search;ui.sort.value=state.sort;ui.forks.checked=state.includeForks;
@@ -19,7 +19,7 @@ function card(repo){
   if(repo.language)meta.append(make('span','', '● '+repo.language));
   meta.append(make('span','', '★ '+compactCount(repo.stars)),make('span','', '⑂ '+compactCount(repo.forks)));
   if(repo.homepage){const hlink=make('a','','Website ↗');hlink.href=repo.homepage;hlink.target='_blank';hlink.rel='noopener noreferrer';meta.append(hlink);}
-  item.append(meta);const choose=make('label','snapshot-select');const check=make('input');check.type='checkbox';check.checked=state.selected.has(repo.fullName);check.addEventListener('change',()=>{if(check.checked)state.selected.add(repo.fullName);else state.selected.delete(repo.fullName);ui.snapshotStatus.textContent=state.selected.size+' selected';});choose.append(check,document.createTextNode(' Add to evaluation shortlist'));item.append(choose);return item;
+  item.append(meta);const choose=make('label','snapshot-select');const check=make('input');check.type='checkbox';check.checked=state.selected.has(repo.fullName);check.addEventListener('change',()=>{if(check.checked){if(state.selected.size>=100){check.checked=false;ui.snapshotStatus.textContent='Maximum 100 repositories per snapshot.';return;}state.selected.add(repo.fullName);}else state.selected.delete(repo.fullName);ui.snapshotStatus.textContent=state.selected.size+' selected';});choose.append(check,document.createTextNode(' Add to evaluation shortlist'));item.append(choose);return item;
 }
 function updateUrl(){history.replaceState(null,'',location.pathname+stateQuery(state)+location.hash);}
 function languageOptions(){const langs=languageChoices(state.repos,state.language);ui.language.replaceChildren(new Option('All languages',''),...langs.map(x=>new Option(x,x)));ui.language.value=state.language;}
@@ -76,7 +76,7 @@ ui.importSnapshot.addEventListener('change',async()=>{
   try{
     if(file.size>1024*1024)throw new Error('Snapshot exceeds 1 MB.');
     const snapshot=validateSnapshot(JSON.parse(await file.text()));
-    ui.snapshotStatus.textContent='Imported snapshot: '+snapshot.repositories.length+' repositories, reviewed '+snapshot.createdAt+'. No live data was changed.';
+    ui.snapshotView.replaceChildren();const heading=make('h3','','Imported evaluation — '+snapshot.createdAt);ui.snapshotView.append(heading);const list=make('ul');for(const record of snapshot.repositories){const li=make('li');const a=make('a','',record.fullName+' @ '+record.commitSha.slice(0,12));a.href='https://github.com/'+record.fullName+'/tree/'+record.commitSha;a.target='_blank';a.rel='noopener noreferrer';li.append(a,document.createTextNode(' · observed '+record.observedAt));list.append(li);}ui.snapshotView.append(list);ui.snapshotStatus.textContent='Imported '+snapshot.repositories.length+' historical records. These are not live verification results.';
   }catch(e){ui.snapshotStatus.textContent='Import rejected: '+e.message;}
   finally{ui.importSnapshot.value='';}
 });
