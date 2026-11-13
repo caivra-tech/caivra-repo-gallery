@@ -1,6 +1,6 @@
 # Repository evaluation snapshots (experimental)
 
-Select up to 100 loaded public repositories and choose **Export selected snapshot**. The browser resolves each selected repository's current HEAD to a 40-character commit SHA and exports a local JSON file. No backend or account is used.
+Select up to 10 loaded public repositories and choose **Export selected snapshot**. The browser resolves each selected repository's current HEAD to a 40-character commit SHA and exports a local JSON file. No backend or account is used.
 
 **Important limitations**
 - The original gallery URL preserves filter criteria, not a stable search result set. Search applies only to loaded API pages.
@@ -8,10 +8,10 @@ Select up to 100 loaded public repositories and choose **Export selected snapsho
 - Commit resolution is sequential and subject to GitHub's unauthenticated API rate limit.
 - A SHA identifies a commit, not a dependency lockfile, verified release, security approval, or assurance that the repository remains available.
 - The snapshot records metadata observations made at export; repository descriptions and stars were fetched earlier and may already have changed.
-- Import validates the schema and displays the count and timestamp; it does not restore a live gallery selection or trust the contents as security evidence.
+- Import validates the schema and renders a read-only list of pinned commit links and observation times. It does not restore live gallery selection, fetch repository data, or establish that the imported evidence is trustworthy.
 - Snapshot files are local. Sharing them is an explicit user action. Do not import or share private or sensitive notes.
 
-The JSON schema identifier is `caivra.repo-evaluation.v1`. Import is bounded to 1 MB and 100 records. Future changes must preserve compatibility or explicitly version the schema.
+The JSON schema identifier is `caivra.repo-evaluation.v1`. Import is bounded to 1 MB and 10 records. Future changes must preserve compatibility or explicitly version the schema.
 
 ## Review gate
 
