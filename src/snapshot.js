@@ -15,7 +15,7 @@ export function validateSnapshot(data) {
       data.repositories.length === 0 || data.repositories.length > 10) throw new Error('Unsupported or invalid snapshot.');
   const seen = new Set();
   for (const r of data.repositories) {
-    if (!r || typeof r !== 'object' || !/^[a-z0-9-]{1,39}\/[a-z0-9_.-]{1,100}$/i.test(r.fullName) ||
+    if (!r || typeof r !== 'object' || !validRepositoryFullName(r.fullName) ||
         !shaPattern.test(r.commitSha) || !Number.isFinite(Date.parse(r.observedAt)) ||
         seen.has(r.fullName.toLowerCase())) throw new Error('Invalid repository snapshot record.');
     seen.add(r.fullName.toLowerCase());
@@ -23,7 +23,7 @@ export function validateSnapshot(data) {
   return data;
 }
 export async function resolveCommit(fullName, fetchImpl = fetch, signal) {
-  if (!/^[a-z0-9-]{1,39}\/[a-z0-9_.-]{1,100}$/i.test(fullName)) throw new Error('Invalid repository name.');
+  if (!validRepositoryFullName(fullName)) throw new Error('Invalid repository name.');
   const url = 'https://api.github.com/repos/' + fullName.split('/').map(encodeURIComponent).join('/') + '/commits/HEAD';
   const response = await fetchImpl(url, {signal,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
   if (!response.ok) throw new Error('Commit resolution failed (HTTP ' + response.status + ').');
