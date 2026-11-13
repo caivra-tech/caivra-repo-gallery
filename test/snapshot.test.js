@@ -18,3 +18,16 @@ test('rejects malicious or malformed imported records',()=>{
  assert.throws(()=>validateSnapshot({...base,repositories:[base.repositories[0],base.repositories[0]]}));
  assert.throws(()=>validateSnapshot({...base,repositories:[{...base.repositories[0],fullName:'../evil'}]}));
 });
+
+test('rejects empty and over-budget imports',()=>{
+ const record={fullName:'caivra-tech/example',commitSha:SHA,observedAt:new Date().toISOString()};
+ const base={schema:SNAPSHOT_SCHEMA,createdAt:new Date().toISOString()};
+ assert.throws(()=>validateSnapshot({...base,repositories:[]}));
+ assert.throws(()=>validateSnapshot({...base,repositories:Array.from({length:11},(_,i)=>({...record,fullName:'caivra-tech/repo'+i}))}));
+});
+test('rejects invalid GitHub commit payload',async()=>{
+ await assert.rejects(resolveCommit(repo.fullName,async()=>({ok:true,json:async()=>({sha:'main'})})),/invalid commit SHA/);
+});
+test('refuses export beyond ten selected repositories before network access',async()=>{
+ await assert.rejects(buildSnapshot(Array.from({length:11},()=>repo),{},()=>{throw Error('unexpected request')}),/Select 1–10/);
+});
